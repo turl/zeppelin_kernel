@@ -780,10 +780,9 @@ static struct snd_endpoint snd_endpoints_list[] = {
     SND(BT,      12),
     SND(IN_S_SADC_OUT_HANDSET, 16),
     SND(IN_S_SADC_OUT_SPEAKER_PHONE, 25),
-    SND(FM_HEADSET , 22),
-    SND(FM_SPEAKER , 23),
-    SND(HEADSET_AND_SPEAKER, 26),      /* Stereo headset + speaker */
-    SND(CURRENT, 28),
+    SND(FM_HEADSET , 26),
+    SND(FM_SPEAKER , 27),
+    SND(CURRENT, 27),
 };
 #undef SND
 
