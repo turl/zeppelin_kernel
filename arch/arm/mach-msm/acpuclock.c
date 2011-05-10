@@ -133,7 +133,7 @@ static struct clkctl_acpu_speed pll0_196_pll1_768_pll2_1056[] = {
 
 /* 7x01/7x25 turbo with GSM capable modem */
 static struct clkctl_acpu_speed pll0_245_pll1_960_pll2_1056[] = {
-	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 19200, 0, 0, 30720 },
+	{ 1, 19200, ACPU_PLL_TCXO, 0, 0, 19200, 0, 0, 30720 },
 	{ 0, 120000, ACPU_PLL_1, 1, 7,  60000, 1, 3,  61440 },
 	{ 1, 122880, ACPU_PLL_0, 4, 1,  61440, 1, 3,  61440 },
 	{ 0, 176000, ACPU_PLL_2, 2, 5,  88000, 1, 3,  61440 },
