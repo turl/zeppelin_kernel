@@ -56,3 +56,4 @@ obj-$(CONFIG_ARCH_OMAP3)        += clk_32k_rw.o
 obj-$(CONFIG_APANIC)		+= apanic.o
 obj-$(CONFIG_MOT_CAMERA_MISC)   += mot_camera_misc/
 obj-$(CONFIG_MOT_CAMERA_MISC_MSM) += mot_camera_misc_msm/
+obj-$(CONFIG_MOT_UNLOCK)        += unlock.o

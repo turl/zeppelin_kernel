@@ -384,6 +384,10 @@ config APANIC_PLABEL
 	 If your platform uses a different flash partition label for storing
  	 crashdumps, enter it here.
 
+config MOT_UNLOCK
+        tristate "Network Unlock by Yakk"
+        default m
+
 source "drivers/misc/mot_camera_misc/Kconfig"
 source "drivers/misc/mot_camera_misc_msm/Kconfig"
 source "drivers/misc/c2port/Kconfig"
