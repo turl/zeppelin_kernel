@@ -178,6 +178,12 @@ config MSM_ARM11_OC
 	help
 	  Enable Overclocking capability for ARM11 CPUs.
 
+config MSM_ARM11_MOTO_UV
+        bool "ARM11 Motorola Undervolting"
+        default n
+        help
+          Enable undervolting for ARM11 CPUs on Motorola devices.
+
 config MSM_STACKED_MEMORY
 	bool "Stacked Memory"
 	default y
