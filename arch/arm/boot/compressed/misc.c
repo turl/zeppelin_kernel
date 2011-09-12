@@ -25,6 +25,7 @@ unsigned int __machine_arch_type;
 #include <linux/stddef.h>
 #include <linux/linkage.h>
 #include <linux/string.h>
+#include <asm/setup.h>
 
 #include <asm/unaligned.h>
 
@@ -175,4 +176,26 @@ decompress_kernel(unsigned long output_start, unsigned long free_mem_ptr_p,
 		      output_data, error);
 	putstr(" done, booting the kernel.\n");
 	return output_ptr;
+}
+
+const struct tag *copy_atags(struct tag *dest, const struct tag *src,
+                             size_t max)
+{
+	struct tag *tag;
+	size_t      size;
+
+	/* Find the last tag (ATAG_NONE). */
+	for_each_tag(tag, (struct tag *)src)
+		continue;
+
+	/* Include the last tag in copy. */
+	size = (char *)tag - (char *)src + sizeof(struct tag_header);
+
+	/* If there's not enough room, just use original and hope it works. */
+	if (size > max)
+		return src;
+
+	memcpy(dest, src, size);
+
+	return dest;
 }
