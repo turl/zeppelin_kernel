@@ -335,10 +335,10 @@ CHECK		= sparse
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
 MODFLAGS	= -DMODULE
-CFLAGS_MODULE   = $(MODFLAGS)
+CFLAGS_MODULE   = $(MODFLAGS) -O2 -march=armv6j -mtune=arm1136jf-s -pipe -fomit-frame-pointer
 AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL	=
+CFLAGS_KERNEL	= -O2 -march=armv6j -mtune=arm1136jf-s -pipe -fomit-frame-pointer
 AFLAGS_KERNEL	=
 
 
