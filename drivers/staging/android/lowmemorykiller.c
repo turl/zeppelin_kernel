@@ -65,7 +65,7 @@ static int
 task_notify_func(struct notifier_block *self, unsigned long val, void *data);
 
 static struct notifier_block task_nb = {
-	.notifier_call  = task_notify_func,
+	.notifier_call	= task_notify_func,
 };
 
 static int
@@ -91,7 +91,9 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	int selected_oom_adj;
 	int array_size = ARRAY_SIZE(lowmem_adj);
 	int other_free = global_page_state(NR_FREE_PAGES);
-	int other_file = global_page_state(NR_FILE_PAGES);
+	int other_file = global_page_state(NR_FILE_PAGES) -
+						global_page_state(NR_SHMEM);
+
 	/*
 	 * If we already have a death outstanding, then
 	 * bail out right away; indicating to vmscan
@@ -107,23 +109,24 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 		array_size = lowmem_adj_size;
 	if (lowmem_minfree_size < array_size)
 		array_size = lowmem_minfree_size;
-	for(i = 0; i < array_size; i++) {
-		if (other_file < lowmem_minfree[i]) {
+	for (i = 0; i < array_size; i++) {
+		if (other_free < lowmem_minfree[i] &&
+		    other_file < lowmem_minfree[i]) {
 			min_adj = lowmem_adj[i];
 			break;
 		}
 	}
 	if (nr_to_scan > 0)
 		lowmem_print(3, "lowmem_shrink %d, %x, ofree %d %d, ma %d\n",
-			nr_to_scan, gfp_mask, other_free, other_file,
-			min_adj);
+			     nr_to_scan, gfp_mask, other_free, other_file,
+			     min_adj);
 	rem = global_page_state(NR_ACTIVE_ANON) +
 		global_page_state(NR_ACTIVE_FILE) +
 		global_page_state(NR_INACTIVE_ANON) +
 		global_page_state(NR_INACTIVE_FILE);
 	if (nr_to_scan <= 0 || min_adj == OOM_ADJUST_MAX + 1) {
 		lowmem_print(5, "lowmem_shrink %d, %x, return %d\n",
-				nr_to_scan, gfp_mask, rem);
+			     nr_to_scan, gfp_mask, rem);
 		return rem;
 	}
 	selected_oom_adj = min_adj;
@@ -139,7 +142,6 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 		sig = p->signal;
 		if (!mm || !sig) {
 			task_unlock(p);
-
 			continue;
 		}
 		oom_adj = sig->oom_adj;
@@ -162,19 +164,19 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 		selected_tasksize = tasksize;
 		selected_oom_adj = oom_adj;
 		lowmem_print(2, "select %d (%s), adj %d, size %d, to kill\n",
-				p->pid, p->comm, oom_adj, tasksize);
+			     p->pid, p->comm, oom_adj, tasksize);
 	}
 	if (selected) {
 		lowmem_print(1, "send sigkill to %d (%s), adj %d, size %d\n",
-			    selected->pid, selected->comm,
-			    selected_oom_adj, selected_tasksize);
+			     selected->pid, selected->comm,
+			     selected_oom_adj, selected_tasksize);
 		lowmem_deathpending = selected;
 		lowmem_deathpending_timeout = jiffies + HZ;
 		force_sig(SIGKILL, selected);
 		rem -= selected_tasksize;
 	}
 	lowmem_print(4, "lowmem_shrink %d, %x, return %d\n",
-		nr_to_scan, gfp_mask, rem);
+		     nr_to_scan, gfp_mask, rem);
 	read_unlock(&tasklist_lock);
 	return rem;
 }
