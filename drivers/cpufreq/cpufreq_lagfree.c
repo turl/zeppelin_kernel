@@ -39,7 +39,7 @@
 #define DEF_FREQUENCY_DOWN_THRESHOLD			(26)
 #define FREQ_STEP_DOWN					(160000)
 #define FREQ_SLEEP_MAX					(528000)
-#define FREQ_AWAKE_MIN					(480000)
+#define FREQ_AWAKE_MIN					(320000)
 
 /*
  * The polling frequency of this governor depends on the capability of
