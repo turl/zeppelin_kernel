@@ -18,6 +18,15 @@ config TOUCHSCREEN_KEY08
         help
           This enables support for Quantum over I2C based touchscreens.
 
+config QTOUCH_RATELIMIT
+        bool "Limit events sent by the touchscreen driver"
+        depends on TOUCHSCREEN_QUANTUM_OBP
+        default y
+        help
+          This reduces the events produced by the touchscreen by half,
+          and takes care of always sending "finger up" and "first
+          touch" events.
+
 config TOUCHSCREEN_ADS7846
 	tristate "ADS7846/TSC2046 and ADS7843 based touchscreens"
 	depends on SPI_MASTER
