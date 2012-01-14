@@ -35,8 +35,8 @@
  * It helps to keep variable names smaller, simpler
  */
 
-#define DEF_FREQUENCY_UP_THRESHOLD			(75)
-#define DEF_FREQUENCY_DOWN_THRESHOLD			(25)
+#define DEF_FREQUENCY_UP_THRESHOLD			(63)
+#define DEF_FREQUENCY_DOWN_THRESHOLD			(26)
 #define FREQ_STEP_DOWN					(160000)
 #define FREQ_SLEEP_MAX					(528000)
 #define FREQ_AWAKE_MIN					(480000)
@@ -102,7 +102,7 @@ static struct dbs_tuners dbs_tuners_ins = {
 	.up_threshold = DEF_FREQUENCY_UP_THRESHOLD,
 	.down_threshold = DEF_FREQUENCY_DOWN_THRESHOLD,
 	.sampling_down_factor = DEF_SAMPLING_DOWN_FACTOR,
-	.ignore_nice = 1,
+	.ignore_nice = 0,
 	//.freq_step = 5,
 };
 
