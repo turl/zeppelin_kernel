@@ -58,4 +58,8 @@ void write_to_strongly_ordered_memory(void);
 #define arch_has_speculative_dfetch()	1
 #endif
 
+#if defined(CONFIG_KEXEC_HARDBOOT) && defined(CONFIG_ARCH_MSM7X01A)
+#define KEXEC_HB_PAGE_ADDR 0x02cb6000
+#endif
+
 #endif

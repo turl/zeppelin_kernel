@@ -4,6 +4,13 @@
 
 #include <asm/kexec.h>
 
+#ifdef CONFIG_KEXEC_HARDBOOT
+#include <asm/memory.h>
+#ifdef CONFIG_ARCH_MSM7X01A
+#include <mach/memory.h>
+#endif
+#endif
+
 	.globl relocate_new_kernel
 relocate_new_kernel:
 
@@ -46,12 +53,44 @@ relocate_new_kernel:
 	b 0b
 
 2:
+	#ifdef CONFIG_KEXEC_HARDBOOT
+	ldr	r0, kexec_hardboot
+	teq	r0, #0
+	bne	hardboot
+	#endif
+
 	/* Jump to relocated kernel */
 	mov lr,r1
 	mov r0,#0
 	ldr r1,kexec_mach_type
 	ldr r2,kexec_boot_atags
 	mov pc,lr
+
+#ifdef CONFIG_KEXEC_HARDBOOT
+hardboot:
+	/* Stash boot arguments in hardboot page:
+	 *  0: KEXEC_HB_PAGE_MAGIC
+	 *  4: kexec_start_address
+	 *  8: kexec_mach_type
+	 * 12: kexec_boot_atags */
+	ldr	r0, =KEXEC_HB_PAGE_ADDR
+	str	r1, [r0, #4]
+	ldr	r1, kexec_mach_type
+	str	r1, [r0, #8]
+	ldr	r1, kexec_boot_atags
+	str	r1, [r0, #12]
+	ldr	r1, =KEXEC_HB_PAGE_MAGIC
+	str	r1, [r0]
+
+#ifdef CONFIG_ARCH_MSM7X01A
+	/* Hard reset via watchdog, decompressor jumps to kernel. */
+loop:	b	loop
+#else
+#error "No reboot method defined for hardboot."
+#endif
+
+	.ltorg
+#endif
 
 	.globl kexec_start_address
 kexec_start_address:
@@ -69,6 +108,12 @@ kexec_mach_type:
 	.globl kexec_boot_atags
 kexec_boot_atags:
 	.long	0x0
+
+#ifdef CONFIG_KEXEC_HARDBOOT
+	.globl kexec_hardboot
+kexec_hardboot:
+	.long	0x0
+#endif
 
 relocate_new_kernel_end:
 
