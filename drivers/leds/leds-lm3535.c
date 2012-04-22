@@ -65,6 +65,8 @@
 #define SUPPORT_LM3535_2ALS  /* enable for LM3535-2ALS support */
 #endif
 
+//#define DEBUG_LM3535
+
 /******************************************************************************
  *  LM3535 registers
  ******************************************************************************/
@@ -139,10 +141,14 @@ enum {
     TRACE_WRITE = 0x8,
     TRACE_EVENT = 0x10,
 };
+#ifdef DEBUG_LM3535
 #ifdef CONFIG_MACH_MOT
 unsigned do_trace = TRACE_ALS | TRACE_SUSPEND | TRACE_BRIGHTNESS;
 #else
 unsigned do_trace = TRACE_ALS; // | TRACE_SUSPEND | TRACE_BRIGHTNESS | TRACE_WRITE;
+#endif
+#else
+unsigned do_trace = 0;
 #endif
 module_param(do_trace, uint, 0644);
 
