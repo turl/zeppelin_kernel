@@ -247,8 +247,8 @@ static bool bq27505_get_temp(int *temp)
 	for (i = 0; i < MAX_NUM_TRIES && !ret; i++) {
 		ret = bq27505_standard_command(TEMPERATURE, &data);
 		if (!ret)
-			pr_err("fuel gauge, cannot get battery temp,\
-					 attempt %d\n", (i+1));
+			pr_err("fuel gauge, cannot get battery temp, "
+					 "attempt %d\n", (i+1));
 	}
 
 	if (ret)
