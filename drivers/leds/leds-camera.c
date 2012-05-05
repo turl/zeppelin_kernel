@@ -30,6 +30,7 @@
 #include <linux/delay.h>
 #include <linux/debugfs.h>
 #include <linux/hrtimer.h>
+#include <linux/wakelock.h>
 #include <asm/gpio.h>
 #include <mach/pmic.h>
 #include <mach/vboost.h>
@@ -295,6 +296,8 @@ static struct android_early_suspend early_suspend = {
 static struct hrtimer cam_led_timer;
 static struct work_struct cam_led_work;
 
+// Needed so the phone doesn't sleep while using torch mode
+struct wake_lock cam_wake_lock;
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -524,9 +527,17 @@ static void cam_led_torch_brightness_set(struct led_classdev *led_cdev,
 
     // disarm any active torch or burst timer
     hrtimer_cancel(&cam_led_timer);
- 
+
+    // we're illuminating, don't suspend the device
+    if(value != 0)
+        wake_lock(&cam_wake_lock);
+
     // use the low current source work function
     rc = cam_led_do_torch_level(value);
+
+    // we finished illuminating, phone may sleep now
+    if(value == 0)
+        wake_unlock(&cam_wake_lock);
 }
 
 //--------------------------------------------------------------------------- 
@@ -1059,6 +1070,10 @@ static int cam_led_probe(struct platform_device *pdev)
         printk(KERN_ERR "%s: NOT Motus or Zeppelin; aborting.\n", __FUNCTION__);
         return -EINVAL;
     }
+
+    //Init the wakelock
+    wake_lock_init(&cam_wake_lock, WAKE_LOCK_SUSPEND, "torch");
+
     // Request ownership of the GPIO for the Camera flash LED
     ret = gpio_request(camera_led_gpio, "cam_led_ctrl");
     if (ret) {
@@ -1119,6 +1134,7 @@ static int cam_led_remove(struct platform_device *pdev)
 {
     printk(KERN_INFO "%s: enter\n", __FUNCTION__);
 
+    wake_lock_destroy(&cam_wake_lock);
     cam_led_unregister();
     return 0;
 }
